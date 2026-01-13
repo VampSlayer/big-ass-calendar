@@ -9,7 +9,6 @@ import {
   formatEventTime,
 } from './utils';
 import { GoogleCalendarEvent } from '@/types/calendar';
-import { format } from 'date-fns';
 
 describe('google-calendar/utils', () => {
   describe('parseEventDate', () => {

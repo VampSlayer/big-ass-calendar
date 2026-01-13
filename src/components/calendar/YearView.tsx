@@ -35,14 +35,21 @@ export const YearView: React.FC<YearViewProps> = ({
       {/* Calendar grid - all months stacked vertically */}
       <div className="border rounded overflow-hidden bg-white shadow-sm">
         {months.map((month) => {
-          // Filter events for this month
+          // Filter events for this month (including multi-day events that span into this month)
           const monthEvents = events.filter((event) => {
-            const eventDate = event.start.dateTime
+            const startDate = event.start.dateTime
               ? new Date(event.start.dateTime)
               : new Date(event.start.date!);
-            return (
-              eventDate.getFullYear() === year && eventDate.getMonth() === month
-            );
+            const endDate = event.end.dateTime
+              ? new Date(event.end.dateTime)
+              : new Date(event.end.date!);
+
+            // Get month boundaries
+            const monthStart = new Date(year, month, 1);
+            const monthEnd = new Date(year, month + 1, 0, 23, 59, 59);
+
+            // Include event if it overlaps with this month
+            return startDate <= monthEnd && endDate >= monthStart;
           });
 
           return (

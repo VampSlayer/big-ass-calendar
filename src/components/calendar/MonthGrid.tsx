@@ -1,8 +1,13 @@
-import React from 'react';
-import { format, getDaysInMonth, isSameMonth } from 'date-fns';
-import { GoogleCalendarEvent } from '@/types/calendar';
-import { DayCell } from './DayCell';
-import { groupEventsByDate, isMultiDayEvent, parseEventDate, getEventColor } from '@/lib/google-calendar/utils';
+import React from "react";
+import { format, getDaysInMonth } from "date-fns";
+import { GoogleCalendarEvent } from "@/types/calendar";
+import { DayCell } from "./DayCell";
+import {
+  groupEventsByDate,
+  isMultiDayEvent,
+  parseEventDate,
+  getEventColor,
+} from "@/lib/google-calendar/utils";
 
 interface MonthGridProps {
   year: number;
@@ -22,10 +27,10 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
   year,
   month,
   events,
-  onEventClick
+  onEventClick,
 }) => {
   const monthDate = new Date(year, month);
-  const monthName = format(monthDate, 'MMM').toUpperCase();
+  const monthName = format(monthDate, "MMM").toUpperCase();
   const daysInMonth = getDaysInMonth(monthDate);
 
   // Separate single-day and multi-day events
@@ -39,17 +44,17 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
 
       // Calculate which days in THIS month the event spans
       const monthStart = new Date(year, month, 1);
-      const monthEnd = new Date(year, month, daysInMonth);
+      const monthEnd = new Date(year, month, daysInMonth, 23, 59, 59);
 
-      // Clamp to current month boundaries
-      let effectiveStart = startDate;
-      let effectiveEnd = endDate;
+      // Check if event overlaps with this month
+      // Event overlaps if it starts before month ends AND ends after month starts
+      const eventOverlapsMonth = startDate <= monthEnd && endDate >= monthStart;
 
-      if (startDate < monthStart) effectiveStart = monthStart;
-      if (endDate > monthEnd) effectiveEnd = monthEnd;
+      if (eventOverlapsMonth) {
+        // Clamp to current month boundaries for display
+        const effectiveStart = startDate < monthStart ? monthStart : startDate;
+        const effectiveEnd = endDate > monthEnd ? monthEnd : endDate;
 
-      // Only show if event overlaps with this month
-      if (isSameMonth(effectiveStart, monthDate) || isSameMonth(effectiveEnd, monthDate)) {
         multiDayEventSpans.push({
           event,
           startDay: effectiveStart.getDate(),
@@ -69,22 +74,25 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   return (
-    <div className="border-bottom" style={{ minHeight: '120px', position: 'relative' }}>
+    <div
+      className="border-bottom"
+      style={{ minHeight: "120px", position: "relative" }}
+    >
       <div className="d-flex">
         {/* Month name column */}
         <div
           className="border-end d-flex align-items-center justify-content-center fw-bold text-primary"
           style={{
-            width: '80px',
-            fontSize: '1.5rem',
-            backgroundColor: '#f8f9fa'
+            width: "80px",
+            fontSize: "1.5rem",
+            backgroundColor: "#f8f9fa",
           }}
         >
           {monthName}
         </div>
 
         {/* Days row */}
-        <div className="d-flex flex-grow-1" style={{ position: 'relative' }}>
+        <div className="d-flex flex-grow-1" style={{ position: "relative" }}>
           {/* Multi-day event bars */}
           {multiDayEventSpans.map((span, idx) => {
             const dayWidth = 100 / daysInMonth;
@@ -96,25 +104,25 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
                 key={`${span.event.id}-${idx}`}
                 className="text-white px-2 py-1"
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   top: `${28 + idx * 24}px`,
                   left: `${left}%`,
                   width: `${width}%`,
                   backgroundColor: span.color,
-                  fontSize: '0.7rem',
-                  borderRadius: '3px',
-                  cursor: 'pointer',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  fontWeight: 'bold',
+                  fontSize: "0.7rem",
+                  borderRadius: "3px",
+                  cursor: "pointer",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  fontWeight: "bold",
                   zIndex: 10,
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
                 }}
                 onClick={() => onEventClick?.(span.event)}
                 title={`${span.event.summary} (Multi-day)`}
               >
-                ⬌ {span.event.summary}
+                {span.event.summary}
               </div>
             );
           })}
@@ -122,7 +130,7 @@ export const MonthGrid: React.FC<MonthGridProps> = ({
           {/* Day cells */}
           {days.map((day) => {
             const date = new Date(year, month, day);
-            const dateKey = format(date, 'yyyy-MM-dd');
+            const dateKey = format(date, "yyyy-MM-dd");
             const dayEvents = eventsByDate.get(dateKey) || [];
 
             return (

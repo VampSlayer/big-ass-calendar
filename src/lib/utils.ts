@@ -91,9 +91,6 @@ export const generateDemoEvents = (year: number): GoogleCalendarEvent[] => {
     // Random template
     const template = eventTemplates[random(eventTemplates.length, i * 400)];
 
-    // Random color from template
-    const color = template.colors[random(template.colors.length, i * 500)];
-
     const date = new Date(year, month, day, hour, 0, 0);
 
     // For multi-day events, use date format and span 2-5 days

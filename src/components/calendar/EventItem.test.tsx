@@ -30,14 +30,16 @@ describe('EventItem', () => {
     expect(handleClick).toHaveBeenCalledWith(mockEvent);
   });
 
-  it('displays multi-day indicator when isMultiDay is true', () => {
-    render(<EventItem event={mockEvent} color="#3788d8" isMultiDay={true} />);
-    expect(screen.getByText(/⬌/)).toBeInTheDocument();
+  it('displays left border for multi-day events', () => {
+    const { container } = render(<EventItem event={mockEvent} color="#3788d8" isMultiDay={true} />);
+    const eventDiv = container.firstChild as HTMLElement;
+    expect(eventDiv).toHaveStyle({ borderLeft: '3px solid rgba(255,255,255,0.6)' });
   });
 
-  it('does not display multi-day indicator when isMultiDay is false', () => {
-    render(<EventItem event={mockEvent} color="#3788d8" isMultiDay={false} />);
-    expect(screen.queryByText(/⬌/)).not.toBeInTheDocument();
+  it('does not display left border when isMultiDay is false', () => {
+    const { container } = render(<EventItem event={mockEvent} color="#3788d8" isMultiDay={false} />);
+    const eventDiv = container.firstChild as HTMLElement;
+    expect(eventDiv).not.toHaveStyle({ borderLeft: '3px solid rgba(255,255,255,0.6)' });
   });
 
   it('applies bold font weight for multi-day events', () => {

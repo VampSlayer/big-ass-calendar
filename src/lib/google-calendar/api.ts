@@ -1,4 +1,4 @@
-import { GoogleCalendar, GoogleCalendarEvent } from '@/types/calendar';
+import { GoogleCalendar, GoogleCalendarEvent } from "@/types/calendar";
 
 // Initialize Google API client
 let gapiInitialized = false;
@@ -13,14 +13,17 @@ export const initializeGoogleAPI = (): Promise<void> => {
       return;
     }
 
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
+    const script = document.createElement("script");
+    script.src = "https://apis.google.com/js/api.js";
     script.onload = () => {
-      gapi.load('client', async () => {
+      gapi.load("client", async () => {
         try {
           await gapi.client.init({
             // No API key needed when using OAuth access tokens
-            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+            apiKey: "",
+            discoveryDocs: [
+              "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
+            ],
           });
           gapiInitialized = true;
           resolve();
@@ -50,13 +53,13 @@ export const fetchCalendarList = async (): Promise<GoogleCalendar[]> => {
     return (response.result.items || []).map((item: any) => ({
       id: item.id,
       summary: item.summary,
-      backgroundColor: item.backgroundColor || '#3788d8',
+      backgroundColor: item.backgroundColor || "#3788d8",
       foregroundColor: item.foregroundColor,
       primary: item.primary || false,
       selected: item.selected !== false, // Default to true if not specified
     }));
   } catch (error) {
-    console.error('Error fetching calendar list:', error);
+    console.error("Error fetching calendar list:", error);
     throw error;
   }
 };
@@ -77,13 +80,13 @@ export const fetchEvents = async (
       timeMin,
       timeMax,
       singleEvents: true, // Expand recurring events
-      orderBy: 'startTime',
+      orderBy: "startTime",
       maxResults: 2500, // Maximum allowed by API
     });
 
     return (response.result.items || []).map((item: any) => ({
       id: item.id,
-      summary: item.summary || '(No title)',
+      summary: item.summary || "(No title)",
       description: item.description,
       start: item.start,
       end: item.end,
@@ -115,9 +118,9 @@ export const fetchAllCalendarEvents = async (
       try {
         const events = await fetchEvents(calendar.id, year);
         // Attach the calendar's background color to each event
-        const eventsWithColor = events.map(event => ({
+        const eventsWithColor = events.map((event) => ({
           ...event,
-          calendarColor: calendar.backgroundColor
+          calendarColor: calendar.backgroundColor,
         }));
         eventsMap.set(calendar.id, eventsWithColor);
       } catch (error) {
