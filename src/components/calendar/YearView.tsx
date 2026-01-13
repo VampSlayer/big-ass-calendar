@@ -33,7 +33,7 @@ export const YearView: React.FC<YearViewProps> = ({
       )}
 
       {/* Calendar grid - all months stacked vertically */}
-      <div className="border rounded overflow-hidden bg-white shadow-sm">
+      <div className="border rounded overflow-auto bg-white shadow-sm">
         {months.map((month) => {
           // Filter events for this month (including multi-day events that span into this month)
           const monthEvents = events.filter((event) => {
