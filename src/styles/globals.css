@@ -1,0 +1,70 @@
+/* Custom global styles */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Wall Calendar specific styles */
+.day-cell {
+  transition: background-color 0.2s;
+}
+
+.day-cell:hover {
+  background-color: #f8f9fa;
+}
+
+/* Ensure equal width columns for days */
+.d-flex.flex-grow-1 > div {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  /* Reduce font sizes on mobile */
+  .fw-bold.text-primary {
+    font-size: 2rem !important;
+  }
+  
+  /* Smaller month labels */
+  .border-end.d-flex.align-items-center {
+    width: 60px !important;
+    font-size: 1.2rem !important;
+  }
+  
+  /* Smaller day cells */
+  .border-end.d-flex.flex-column {
+    min-width: 35px !important;
+    font-size: 0.6rem !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .navbar,
+  .alert {
+    display: none;
+  }
+  
+  @page {
+    size: landscape;
+    margin: 0.5cm;
+  }
+}
